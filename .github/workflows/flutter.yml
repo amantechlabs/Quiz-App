@@ -1,48 +1,28 @@
-name: Build Flutter APK
+name: Flutter CI
 
 on:
   push:
-    branches:
-      - main
-
+    branches: [main, dev]
+  pull_request:
+    branches: [main]
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: quizmaster_pro
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      -uses: actions/checkout@v3
 
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-
-      - name: Install Flutter
-        uses: subosito/flutter-action@v2
+      -uses: subsito/flutter-action@v2
         with:
           flutter-version: '3.22.0'
-          cache: true
 
-      - name: Clean project
-        run: flutter clean
-
-      - name: Get dependencies
+      -name: Install dependencies
         run: flutter pub get
+        
+      -name: Analyze code
+        run: flutter analyze
 
-      #- name: Generate Drift files
-      #  run: dart run build_runner build --delete-conflicting-outputs
+      -name: Run tests
+        run: flutter test
 
-      - name: Build APK
-        run: flutter build apk --release
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-release
-          path: build/app/outputs/flutter-apk/app-release.apk
+      -name: Build APK
+        run: flutter build apk --release --no-tree-shake-icons
