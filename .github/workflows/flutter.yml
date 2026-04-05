@@ -11,7 +11,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: quizmaster
+        working-directory: quizmaster_pro
 
     steps:
       - name: Checkout code
